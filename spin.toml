@@ -3,24 +3,36 @@ spin_manifest_version = 2
 [application]
 authors = ["aldwinyu"]
 description = ""
-name = "glue-glue"
+name = "cron-bot"
 version = "0.1.0"
 
 [[trigger.http]]
-route = "/..."
-component = "glue-glue"
+route = "/telegram-bot/..."
+component = "telegram-bot"
 
 [variables]
 telegram_bot_token = { required = true }
 
-[component.glue-glue]
-source = "target/glue-glue.wasm"
+[component.telegram-bot]
+source = "telegram-bot/target/telegram-bot.wasm"
 exclude_files = ["**/node_modules"]
 allowed_outbound_hosts = [ "https://api.telegram.org" ]
 
-[component.glue-glue.build]
+[component.telegram-bot.build]
 command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+watch = ["src/**/*.ts"]
+workdir = "telegram-bot"
 
-[component.glue-glue.variables]
+[component.telegram-bot.variables]
 telegram_bot_token = "{{ telegram_bot_token }}"
+
+[[trigger.http]]
+route = "/cron-job/..."
+component = "cron-job"
+
+[component.cron-job]
+source = "cron-job/target/cron-job.wasm"
+[component.cron-job.build]
+command = "npm run build"
+workdir = "cron-job"
+
